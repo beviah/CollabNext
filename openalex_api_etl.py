@@ -6,26 +6,16 @@ from google.colab import userdata
 
 def urlencode(query):return urllib.parse.quote_plus(query)
 
-def remove_empty_lines(text):
-    lines = text.split('\n')
-    toremove = set()
-    new = []
-    state = ''
-    uni2state = {}
-    for i, line in enumerate(lines):
-        if line.strip() and i not in toremove:
-            line = line.split(' - ')[0] # ignoring cities for now.. if ambiguity exists, they should be considered.
-            new.append(line)
-            uni2state[line] = state
-        elif not line.strip():
-            toremove.add(i+1)
-            state = lines[i+1]
-    return '\n'.join(new), uni2state
-
-
-with open('hbcus.txt', 'r') as f:
-    hbcus = f.read()
-hbcus, uni2state = remove_empty_lines(hbcus)
+uni2state = {}
+hbcus = []
+with open('hbcus.tsv', 'r', encoding='utf-8') as f:
+    for line in f:
+        if not line.strip():continue
+        hbcu, city, state = line.split('\t')
+        hbcu = hbcu.strip()
+        state = state.strip()
+        hbcus.append(hbcu)
+        uni2state[hbcu] = state
 
 # define intermediary keys that need to be looked at
 keep = {'id', 'publication_year', 'author', 'authors', 'authorship', 'authorships', 'display_name', 'works', 'work', 'title', 'institution', 'institutions', 'topics', 'topic', 'grants', 'funder', 'type', 'affiliation', 'affiliations'}
