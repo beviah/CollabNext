@@ -1,28 +1,13 @@
 !pip install py2neo
+!pip install hyperdb-python
+
 
 import json, os, requests, urllib.parse
+from hyperdb import HyperDB
 from py2neo import Graph, Node, Relationship, NodeMatcher
 from google.colab import userdata
 
 def urlencode(query):return urllib.parse.quote_plus(query)
-
-uni2state = {}
-hbcus = []
-with open('hbcus.tsv', 'r', encoding='utf-8') as f:
-    for line in f:
-        if not line.strip():continue
-        hbcu, city, state = line.split('\t')
-        hbcu = hbcu.strip()
-        state = state.strip()
-        hbcus.append(hbcu)
-        uni2state[hbcu] = state
-
-# define intermediary keys that need to be looked at
-keep = {'id', 'publication_year', 'author', 'authors', 'authorship', 'authorships', 'display_name', 'works', 'work', 'title', 'institution', 'institutions', 'topics', 'topic', 'grants', 'funder', 'type', 'affiliation', 'affiliations'}
-
-#define final labels of interested to be inserted into the graph
-lkeep = {'author', 'work', 'institution', 'topic', 'funder'}
-
 
 def clean_data(data):
     """Remove keys not in the 'keep' list."""
@@ -48,9 +33,10 @@ def process_json(label, data, parent_label=None, parent_data=None):
     if isinstance(data, dict):
         if 'id' in data:
             only_data = remove_subs(data)
-            create_or_update_node(label, only_data)
+            #create_or_update_node(label, only_data) # this is now done during relation.. 
         for key, value in data.items():
-            if key in ['authors', 'topics', 'works', 'institutions']:key=key[:-1] #remove plural s; those were intermediary keys
+            if key in ['authors', 'topics', 'works', 'institutions', 'keywords']:key=key[:-1] #remove plural s; those were intermediary keys
+            if key.startswith('primary_'):key = key[8:]#merge primary with other topics
             nlabel = key if key in lkeep else label
             if isinstance(value, dict):
                 process_json(nlabel, value, label, only_data or parent_data)
@@ -65,8 +51,8 @@ def process_json(label, data, parent_label=None, parent_data=None):
     else:
         return
         
-    if doit and 'id' in data:
-        create_or_update_node(label, only_data)
+    #if doit and 'id' in data: # this is now done during relation.. 
+    #    create_or_update_node(label, only_data)
         
     if parent_label and parent_label!=label and parent_label in lkeep and label in lkeep:
         if only_data and parent_data:
@@ -94,6 +80,7 @@ def add_relationships(parent_data, child_data, parent_label, child_label):
     if parent_node and child_node:
         graph.merge(Relationship(parent_node, child_label, child_node))
 
+def bad_geo(item):return starting=='institutions' and item['geo']['region'] and item['geo']['region'] != uni2state.get(query, '')
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
@@ -108,46 +95,80 @@ if purge:
 
 tx = graph.begin()
 
-for uni in hbcus:
-    url = 'https://api.openalex.org/institutions?search='+urlencode(uni)
+
+# define intermediary keys that need to be looked at
+keep = {'id', 'publication_year', 'display_name',
+        'author', 'authors', 'authorship', 'authorships',
+        'works', 'work', #'title',
+        'institution', 'institutions',
+        'topics', 'topic', 'primary_topic', 'keywords', 'keyword', 'concepts',
+        'grants', 'funder',
+        'type',
+        'affiliation', 'affiliations',
+        'related_works', 'referenced_works'
+        }
+
+#define final labels of interested to be inserted into the graph
+lkeep = {'publication_year', 'author', 'work', 'institution', 'topic', 'funder', 'primary_topic', 'keyword', 'concepts', 'related_works', 'referenced_works'}
+
+
+starting_with = 'topics'
+
+uni2state = {}
+inputs = []
+if starting_with == 'institutions':
+    with open('inputs.tsv', 'r', encoding='utf-8') as f:
+        for line in f:
+            if not line.strip():continue
+            hbcu, city, state = line.split('\t')
+            hbcu = hbcu.strip()
+            state = state.strip()
+            inputs.append(hbcu)
+            uni2state[hbcu] = state
+else:
+    inputs = ['artificial intelligence']
+
+
+for query in inputs:
+    url = 'https://api.openalex.org/{0}?search={1}'.format(starting_with, urlencode(query))
     mdata = requests.get(url, headers=headers).json()
-    for item in mdata['results']:
-        if item['geo']['region'] and item['geo']['region'] != uni2state.get(uni, ''):
-            continue
-        item = clean_data(item)
-        process_json('institution', item)
+    if len(mdata['results'])==0:continue
+    item = mdata['results'][0] # only top valid institution result, otherwise graph explosion is insane!
+    if bad_geo(itme):continue
+    
+    item = clean_data(item)
+    process_json('institution', item)
+
+    graph.commit(tx)
+    tx = graph.begin()
+
+    iid = item['id'].split('/')[-1]
+
+    #   https://api.openalex.org/works?filter=topics.id:T12260
+    kvs = {
+        #https://api.openalex.org/works?filter=institutions.id:I4210103791&per-page=200&cursor=*
+        'work': 'https://api.openalex.org/works?filter={0}.id:{1}&per-page=200&cursor={2}'
+        ###https://api.openalex.org/authors?filter=affiliations.institution.id:I4210103791&per-page=200&cursor=*
+        ##'author': 'https://api.openalex.org/authors?filter=affiliations.institution.id:{0}&per-page=200&cursor={1}' #this is actually fetched through works, so no need for separate api calls. 
+    }
+    for what, url_template in kvs.items():
+        cursor = '*'
+        while True:
+            url = url_template.format(starting_with, iid, cursor)
+            data = requests.get(url, headers=headers).json()
+            try:
+                cursor = data['meta']['next_cursor']
+            except:
+                if 'results' not in data:
+                    break
+            itm = data['results']
+            for i in itm:
+                # TODO: here introduce some selectivity based on keywords/current connectivity, as some topics have 30k works... maybe skip older articles with many citations, focus on more recent ones. 
+                i = clean_data(i)
+                process_json(what, i) if what=='work' else process_json(what, {what:i}) #not sure if i need this now; i did at one point, but some refactoring happened since.. 
 
         graph.commit(tx)
         tx = graph.begin()
 
-        iid = item['id'].split('/')[-1]
-
-        kvs = {
-            #https://api.openalex.org/works?filter=institutions.id:I4210103791&per-page=200&cursor=*
-            'work': 'https://api.openalex.org/works?filter=institutions.id:{0}&per-page=200&cursor={1}',
-            
-            #https://api.openalex.org/authors?filter=affiliations.institution.id:I4210103791&per-page=200&cursor=*
-            'author': 'https://api.openalex.org/authors?filter=affiliations.institution.id:{0}&per-page=200&cursor={1}'
-        }
-        for what, url_template in kvs.items():
-            #data['meta']['next_cursor']
-            cursor = '*'
-            while True:
-                url = url_template.format(iid, cursor)
-                data = requests.get(url, headers=headers).json()
-                try:
-                    cursor = data['meta']['next_cursor']
-                except:
-                    if 'results' not in data:
-                        break
-                itm = data['results']
-                for i in itm:
-                    i = clean_data(i)
-                    process_json(what, i) if what=='work' else process_json(what, {what:i}) #not sure if i need this now; i did at one point, but some refactoring happened since.. 
-
-            graph.commit(tx)
-            tx = graph.begin()
-
-        break #only top valid institution result
 
 graph.commit(tx)
