@@ -30,7 +30,10 @@ with open('hbcus.txt', 'r') as f:
 hbcus, uni2state = remove_empty_lines(hbcus)
 
 
+# define intermediary keys that need to be looked at
 keep = {'id', 'publication_year', 'author', 'authors', 'authorship', 'authorships', 'display_name', 'works', 'work', 'title', 'institution', 'institutions', 'topics', 'topic', 'grants', 'funder', 'type', 'affiliation', 'affiliations'}
+
+#define final labels of interested to be inserted into the graph
 lkeep = {'author', 'work', 'institution', 'topic', 'funder'}
 
 def clean_data(data):
@@ -65,10 +68,7 @@ def process_json(label, data, parent_label=None, parent_data=None):
             only_data = remove_subs(data)
             create_or_update_node(label, only_data)
         for key, value in data.items():
-            if key=='authors':key='author'
-            if key=='topics':key='topic'
-            if key=='works':key='work'
-            if key=='institutions':key='institution'
+            if key in ['authors', 'topics', 'works', 'institutions']:key=key[:-1] #remove plural s; those were intermediary keys
             nlabel = key if key in lkeep else label
             if isinstance(value, dict):
                 process_json(nlabel, value, label, only_data or parent_data)
@@ -132,7 +132,6 @@ def add_relationships(parent_data, child_data, parent_label, child_label):
         if prn:print('7', parent_node, child_node, parent_label, child_label)
 
 
-
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
 # Connect to Neo4j
@@ -144,7 +143,6 @@ graph.commit(tx)
 
 testing = False
 prn = False
-
 
 tx = graph.begin()
 
@@ -214,12 +212,6 @@ for uni in hbcus:
         graph.commit(tx)
         tx = graph.begin()
 
-
         break #only top valid institution result
 
-
-
 graph.commit(tx)
-
-
-
