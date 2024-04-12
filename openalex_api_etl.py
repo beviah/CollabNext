@@ -56,10 +56,8 @@ def remove_subs(data):
 def process_json(label, data, parent_label=None, parent_data=None):
     """Recursively process JSON to create nodes and relationships."""
     if prn:print('0', parent_label, label, parent_data, data)
-    """
-    {'institution': {'id': 'https://openalex.org/I91045830', 'display_name': 'Texas A&M University', 'type': 'education', 'topics': [...]}}
-        {'topics': {'id': 'https://openalex.org/T10093', 'display_name': 'Theoretical and Experimental Nuclear Structure'}}
-
+    """     {'institution': {'id': 'https://openalex.org/I91045830', 'display_name': 'Texas A&M University', 'type': 'education', 'topics': [...]}}
+                {'topics': {'id': 'https://openalex.org/T10093', 'display_name': 'Theoretical and Experimental Nuclear Structure'}}
     """
     only_data = None
     doit = False
@@ -165,52 +163,35 @@ for uni in hbcus:
 
         iid = item['id'].split('/')[-1]
 
+        kvs = {
+            #https://api.openalex.org/works?filter=institutions.id:I4210103791&per-page=200&cursor=*
+            'work': 'https://api.openalex.org/works?filter=institutions.id:{0}&per-page=200&cursor={1}',
+            
+            #https://api.openalex.org/authors?filter=affiliations.institution.id:I4210103791&per-page=200&cursor=*
+            'author': 'https://api.openalex.org/authors?filter=affiliations.institution.id:{0}&per-page=200&cursor={1}'
+        }
+        for what, url_template in kvs.items():
+            #url_template = 'https://api.openalex.org/works?filter=institutions.id:{0}&per-page=200&cursor={1}'
+            #data['meta']['next_cursor']
+            cursor = '*'
+            while True:
+                url = url_template.format(iid, cursor)
+                if prn:print(what.upper(), url)
+                data = requests.get(url, headers=headers).json()
+                try:
+                    cursor = data['meta']['next_cursor']
+                except:
+                    if 'results' not in data:
+                        break
+                itm = data['results']
+                #works.extend(itm)
+                for i in itm:
+                    i = clean_data(i)
+                    process_json(what, i) if what=='work' else process_json(what, {what:i}) #not sure if i need this now; i did at one point, but some refactoring happened since.. 
+                if testing:break
 
-        #https://api.openalex.org/works?filter=institutions.id:I4210103791&per-page=200&cursor=*
-        url_template = 'https://api.openalex.org/works?filter=institutions.id:{0}&per-page=200&cursor={1}'
-        #data['meta']['next_cursor']
-        cursor = '*'
-        while True:
-            url = url_template.format(iid, cursor)
-            data = requests.get(url, headers=headers).json()
-            try:
-                cursor = data['meta']['next_cursor']
-            except:
-                if 'results' not in data:
-                    break
-            itm = data['results']
-            #works.extend(itm)
-            for i in itm:
-                i = clean_data(i)
-                process_json('work', i)
-            if testing:break
-
-        graph.commit(tx)
-        tx = graph.begin()
-
-
-        #https://api.openalex.org/authors?filter=affiliations.institution.id:I4210103791&per-page=200&cursor=*
-        url_template = 'https://api.openalex.org/authors?filter=affiliations.institution.id:{0}&per-page=200&cursor={1}'
-        #data['meta']['next_cursor']
-        cursor = '*'
-        while True:
-            url = url_template.format(iid, cursor)
-            if prn:print('AUTHOR', url)
-            data = requests.get(url, headers=headers).json()
-            try:
-                cursor = data['meta']['next_cursor']
-            except:
-                if 'results' not in data:
-                    break
-            itm = data['results']
-            #authors.extend(itm)
-            for i in itm:
-                i = clean_data(i)
-                process_json('author', {'author':i})
-            if testing:break
-
-        graph.commit(tx)
-        tx = graph.begin()
+            graph.commit(tx)
+            tx = graph.begin()
 
         break #only top valid institution result
 
