@@ -80,7 +80,7 @@ def add_relationships(parent_data, child_data, parent_label, child_label):
     if parent_node and child_node:
         graph.merge(Relationship(parent_node, child_label, child_node))
 
-def bad_geo(item):return starting=='institutions' and item['geo']['region'] and item['geo']['region'] != uni2state.get(query, '')
+def bad_geo(item):return starting_with=='institutions' and item['geo']['region'] and item['geo']['region'] != uni2state.get(query, '')
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
@@ -134,7 +134,7 @@ for query in inputs:
     mdata = requests.get(url, headers=headers).json()
     if len(mdata['results'])==0:continue
     item = mdata['results'][0] # only top valid institution result, otherwise graph explosion is insane!
-    if bad_geo(itme):continue
+    if bad_geo(item):continue
     
     item = clean_data(item)
     process_json('institution', item)
