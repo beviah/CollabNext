@@ -74,7 +74,7 @@ except:
     icategorical = {}
     cmax = 0
 
-#do they ned to be uniform? 
+# these are actually not used.. thought I would need them at some point for some Neo4J procedures
 def add_categorical(item):
     global cmax
     for key in list(item.keys()):
