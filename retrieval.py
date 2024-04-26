@@ -1,4 +1,12 @@
 import json, os, requests, urllib.parse, re, pandas as pd, hashlib, pickle, pysbd, random, sys, uuid, numpy as np
+import streamlit as st
+from streamlit_chat import message
+
+st.set_page_config(page_title="CollabNext")
+st.title("CollabNext")
+#st.info("Yep",icon=""ℹ️"")
+
+
 from envs import * # set os.environ(s) here
 from pathlib import Path
 #from py2neo import Graph, Node, Relationship, NodeMatcher
@@ -131,7 +139,7 @@ existing_vector_index = Neo4jVector.from_existing_index(
     #text_node_property="title_abstract",
 )
 
-print(existing_vector_index.similarity_search("Give me some random results and methods.", k=2))
+#print(existing_vector_index.similarity_search("Give me some random results and methods.", k=2))
 
 if False: # already done in neo browswer
     """
@@ -200,10 +208,12 @@ The question is:
 {question}"""
 
 
-"""TODO:
-{code: Neo.ClientError.Statement.SyntaxError} {message: Cannot use aggregation in ORDER BY if there are no aggregate expressions in the preceding RETURN (line 3, column 1 (offset: 126))
-chain queries with error contexts and try 1 or 2 times fixing query.. 
-"""
+if False:
+    pass #streamlit executes comment
+    """TODO:
+    {code: Neo.ClientError.Statement.SyntaxError} {message: Cannot use aggregation in ORDER BY if there are no aggregate expressions in the preceding RETURN (line 3, column 1 (offset: 126))
+    chain queries with error contexts and try 1 or 2 times fixing query.. 
+    """
 
 
 CYPHER_GENERATION_PROMPT = PromptTemplate(
@@ -216,8 +226,38 @@ chain_language_example = GraphCypherQAChain.from_llm(
     cypher_prompt=CYPHER_GENERATION_PROMPT
 )
 
-chain_language_example.invoke({'query':"""
-Which author from Eastern Oregon University worked on protein supplementation?
-"""})
+#chain_language_example.invoke({'query':"""Which author from Eastern Oregon University worked on protein supplementation?"""})
 
 
+ce = chain_language_example.invoke
+
+
+
+def generate_response(prompt, cypher=True):
+    try:return ce({'query':prompt})['result']
+    except:return ''
+    
+
+with st.sidebar:
+    st.markdown('Ask questions about researhers, universities, topics, papers')
+    st.page_link('https://github.com/beviah/CollabNext', label='CollabNext by beviah')
+    
+if "messages" not in st.session_state.keys():
+    st.session_state.messages = [{"role": "assistant", "content": "How may I help you?"}]
+
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
+
+if user_input := st.chat_input():
+    st.session_state.messages.append({"role": "user", "content": user_input})
+    with st.chat_message("user"):
+        st.write(user_input)
+
+
+if st.session_state.messages[-1]["role"] != "assistant":
+    with st.chat_message("assistant"):
+        response = generate_response(user_input) 
+        message = {"role": "assistant", "content": response}
+        st.write(message["content"]) 
+        st.session_state.messages.append(message)
