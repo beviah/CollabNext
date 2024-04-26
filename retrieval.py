@@ -131,7 +131,7 @@ existing_vector_index = Neo4jVector.from_existing_index(
     #text_node_property="title_abstract",
 )
 
-print(existing_vector_index.similarity_search("Give me some random results and methods.", k=2)) # returns empty set, as if index is empty.. but its not. 
+print(existing_vector_index.similarity_search("Give me some random results and methods.", k=2))
 
 if False: # already done in neo browswer
     """
