@@ -34,5 +34,7 @@ It then fetches whatever is in the **lkeep** set, while looking through **keep**
  - Q: Give me institution with most authors of works on biology which have centrality less than 10
    - A: Delaware State University has the most authors of works on biology with centrality less than 10
   
+   * Community and centrality are properties not present in openalex, but calculated on a portion of the graph ingested through ETL step. 
+  
  - Q: Give me institution with most different communities of authors of works on social justice
    - A: Miles College has 1 community of authors of works on social justice.
