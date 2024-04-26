@@ -22,12 +22,17 @@ It then fetches whatever is in the **lkeep** set, while looking through **keep**
  - Q: Which author from Eastern Oregon University worked on protein supplementation?
    - A: Bruno I Cappellozza, D. W. Bohnert, M. M. Reis, Megan L Van Emon, C. S. Schauer, S. J. Falck, Reinaldo F Cooke from Eastern Oregon University worked on protein supplementation.
 
- - Q: give me institutions which explore mechanical engineering.
+ - Q: Give me institutions which explore mechanical engineering.
    - A: University of Tennessee at Chattanooga, Chattanooga State Community College, Lawson State Community College explore mechanical engineering.
 
- - Q: give me institution with most authors of works.
+ - Q: Give me institution with most authors of works.
    - A: Tuskegee University has the most authors of works with a total of 3557.
 
- - Q: give me institution with most authors of works on biology.
+ - Q: Give me institution with most authors of works on biology.
    - A: Cornell University has the most authors of works on biology.
 
+ - Q: Give me institution with most authors of works on biology which have centrality less than 10
+   - A: Delaware State University has the most authors of works on biology with centrality less than 10
+  
+ - Q: Give me institution with most different communities of authors of works on social justice
+   - A: Miles College has 1 community of authors of works on social justice.
