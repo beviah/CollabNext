@@ -49,11 +49,11 @@ Note: Community and centrality are properties not present in openalex, but calcu
 
 ### Sentence restructuring... sensitivity issues:
 
- Only the last one returned what I was looking for:
+ Only **bold** one return what I was looking for, others return universities or nothing:
  - Q: give me researchers from different communities and universities on the topics of health
  - Q: give me researchers from different communities on the topics of health
  - Q: give me authors from different communities on the topics of health
- - Q: give me researchers on the topics of health belonging to distinct communities
+ - **Q: give me researchers on the topics of health belonging to distinct communities** (somewhat o.k.) 
  - Q: give me researchers from different communities on the topics of mentalhealth
  - Q: give me researchers from different communities on the topics of mental health
  - Q: give me authors from different communities on the topics of mental health
