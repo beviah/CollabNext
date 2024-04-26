@@ -38,3 +38,24 @@ It then fetches whatever is in the **lkeep** set, while looking through **keep**
    - A: Miles College has 1 community of authors of works on social justice.
 
 Note: Community and centrality are properties not present in openalex, but calculated on a portion of the graph ingested through ETL step. 
+
+## Behind the scenes
+
+Q: give me institution with most different communities of authors of works on results
+
+LLM Generated Cypher:
+```
+MATCH (i:institution)-[:INTERACTS]->(w:work)-[:author]->(a:author)
+WITH i, collect(DISTINCT a.community) as author_communities
+WITH i, size(author_communities) as num_communities
+RETURN i.display_name, i.id, num_communities
+ORDER BY num_communities DESC
+LIMIT 1```
+
+Full Context:
+{'i.display_name': 'Tuskegee University', 'i.id': 'https://openalex.org/I6026837', 'num_communities': 7}
+
+Finished chain.
+A: Tuskegee University has the most different communities of authors of works on results.
+
+In this small demo dataset there are only ~10 communities for all the topics combined.. label propagation was used for community detection.. 
