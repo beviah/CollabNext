@@ -189,6 +189,7 @@ WHERE toLower(c.display_name) CONTAINS "mechanical engineering" OR toLower(w.tit
 RETURN DISTINCT i.display_name, i.id, w.title, c.display_name
 LIMIT 3
 
+Note: Always specify variable:label pair, so (c:concepts) for example
 Note: Always treat (c:concepts|topics|keywords|x_concepts) nodes as one in the search
 Note: For work nodes use 'title_abstract' property, for every other node type/label use 'display_name'!
 Note: work is central node connected to institutions and authors.
