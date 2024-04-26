@@ -57,6 +57,12 @@ Note: Community and centrality are properties not present in openalex, but calcu
  - **Q: give me researchers on the topics of health belonging to distinct communities** (somewhat o.k.) 
  - **Q: give me authors of works on the topic of mental health that belong to distinct communities**
    - A: M. D. MacNeil, F.W.C. Neser, Rulien Grobler, F.H. De Witt, Errol D. Cason, Ockert Einkamerer, G.C. Josling, H.A. O’Neill, Mike D Fair, J. J. Baloyi
+  
+ - Q: give me most common topics of research by authors affiliated with Cornell University
+ - Q: give me most common topics of research by works of authors affiliated with Cornell University
+ - Q: give me most common topics associated with Cornell University
+ - **Q: give me most common topics of works done by Cornell University faculty**
+   - A: The most common topics of works done by Cornell University faculty are Genomic Landscape of Cancer and Mutational Signatures, Genetic Research on BRCA Mutations and Cancer Risk, and Advancements in Prostate Cancer Research.
 
 Seems sentence needs to follow the pattern of the CYPHER query.. so another step should be instructing LLM to figure out how to restructure the sentence in the specified way. 
 
