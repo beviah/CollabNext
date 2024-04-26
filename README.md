@@ -30,6 +30,11 @@ It then fetches whatever is in the **lkeep** set, while looking through **keep**
 
  - Q: Give me institution with most authors of works on biology.
    - A: Cornell University has the most authors of works on biology.
+  
+ - Q: Give me most researched topics by Tuskegee University.
+   - THIS BREAKS THE CYPHER, specify 'institution'; for this version of the app you need to tell LLM where to look at
+   - Q: Give me most researched topics by institution Tuskegee University.
+     - A: Advancements in Prostate Cancer Research, Nutritional Strategies for Ruminant Health and Production, Remote Laboratories in Engineering Education.
 
  - Q: Give me institution with most authors of works on biology which have centrality less than 10
    - A: Delaware State University has the most authors of works on biology with centrality less than 10
