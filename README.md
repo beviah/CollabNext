@@ -16,6 +16,7 @@ Current ETL starts with a
 
 It then fetches whatever is in the **lkeep** set, while looking through **keep** properties... so you can modify those. Script is generic, it filters those massive jsons based on your property list. OpenAlex has 3 billion triplets, so it is not practical to filter those for prototyping purposes and with limited resources. One could start from a single uni/author/work, and start expanding graph connections, until satisfying results/recommendations are found.. but then the graph can explode rapidly depending on connectivity of authors/institutions.. so a smarter real time filtering by i.e. topics would be practical!
 
+**ADAPTABILITY:** With very little modification this code can be adapted to other types of datasets, i.e. analysis of [Clinical Trials](https://classic.clinicaltrials.gov/api/gui/ref/api_urls)
 
 ## Examples
 
