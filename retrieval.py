@@ -134,9 +134,6 @@ existing_vector_index = Neo4jVector.from_existing_index(
 print(existing_vector_index.similarity_search("Give me some random results and methods.", k=2)) # returns empty set, as if index is empty.. but its not. 
 
 if False: # already done in neo browswer
-    # This is a chortcut solution for the demo, search all text fields at once, hope classic IR algo returns the most relevant
-    #  instead of using specific queries for question types like this approach:
-    #   https://github.com/tomasonjo/blogs/blob/master/llm/langchain_neo4j_tips.ipynb
     """
     label	property
     institution	display_name
