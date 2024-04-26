@@ -45,6 +45,24 @@ It then fetches whatever is in the **lkeep** set, while looking through **keep**
 
 Note: Community and centrality are properties not present in openalex, but calculated on a portion of the graph ingested through ETL step. 
 
+## TODO
+
+### Sentence restructuring... sensitivity issues:
+
+ Only the last one returned what I was looking for:
+ - Q: give me researchers from different communities and universities on the topics of health
+ - Q: give me researchers from different communities on the topics of health
+ - Q: give me authors from different communities on the topics of health
+ - Q: give me researchers on the topics of health belonging to distinct communities
+ - Q: give me researchers from different communities on the topics of mentalhealth
+ - Q: give me researchers from different communities on the topics of mental health
+ - Q: give me authors from different communities on the topics of mental health
+ - **Q: give me authors of works on the topic of mental health that belong to distinct communities**
+ - A: M. D. MacNeil, F.W.C. Neser, Rulien Grobler, F.H. De Witt, Errol D. Cason, Ockert Einkamerer, G.C. Josling, H.A. O’Neill, Mike D Fair, J. J. Baloyi
+
+Seems sentence needs to follow the pattern of the CYPHER query.. so another step should be instructing LLM to figure out how to restructure the sentence in the specified way. 
+
+
 ## Behind the scenes
 
 Q: give me institution with most different communities of authors of works on results
