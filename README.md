@@ -15,3 +15,19 @@ Current ETL starts with a
  - 👩Authors, 📚Sources, 🏫Institutions, 💡Topics, 🏢Publishers, 💰Funders, 🌎Geo, 💡Concepts
 
 It then fetches whatever is in the **lkeep** set, while looking through **keep** properties... so you can modify those. Script is generic, it filters those massive jsons based on your property list. OpenAlex has 3 billion triplets, so it is not practical to filter those for prototyping purposes and with limited resources. One could start from a single uni/author/work, and start expanding graph connections, until satisfying results/recommendations are found.. but then the graph can explode rapidly depending on connectivity of authors/institutions.. so a smarter real time filtering by i.e. topics would be practical!
+
+
+## Examples
+
+ - Q: Which author from Eastern Oregon University worked on protein supplementation?
+   - A: Bruno I Cappellozza, D. W. Bohnert, M. M. Reis, Megan L Van Emon, C. S. Schauer, S. J. Falck, Reinaldo F Cooke from Eastern Oregon University worked on protein supplementation.
+
+ - Q: give me institutions which explore mechanical engineering.
+   - A: University of Tennessee at Chattanooga, Chattanooga State Community College, Lawson State Community College explore mechanical engineering.
+
+ - Q: give me institution with most authors of works.
+   - A: Tuskegee University has the most authors of works with a total of 3557.
+
+ - Q: give me institution with most authors of works on biology.
+   - A: Cornell University has the most authors of works on biology.
+
