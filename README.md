@@ -51,12 +51,10 @@ Note: Community and centrality are properties not present in openalex, but calcu
 
  Only **bold** ones return what I was looking for, others return universities or nothing:
  - Q: give me researchers from different communities and universities on the topics of health
- - Q: give me researchers from different communities on the topics of health
- - Q: give me authors from different communities on the topics of health
- - **Q: give me researchers on the topics of health belonging to distinct communities** (somewhat o.k.) 
  - Q: give me researchers from different communities on the topics of mentalhealth
  - Q: give me researchers from different communities on the topics of mental health
  - Q: give me authors from different communities on the topics of mental health
+ - **Q: give me researchers on the topics of health belonging to distinct communities** (somewhat o.k.) 
  - **Q: give me authors of works on the topic of mental health that belong to distinct communities**
    - A: M. D. MacNeil, F.W.C. Neser, Rulien Grobler, F.H. De Witt, Errol D. Cason, Ockert Einkamerer, G.C. Josling, H.A. O’Neill, Mike D Fair, J. J. Baloyi
 
