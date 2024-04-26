@@ -32,7 +32,7 @@ It then fetches whatever is in the **lkeep** set, while looking through **keep**
    - A: Cornell University has the most authors of works on biology.
   
  - Q: Give me most researched topics by Tuskegee University.
-   - THIS BREAKS THE CYPHER; for this version of the app you need to tell LLM where to look. specify 'institution'
+   - THIS MAY BREAK THE CYPHER; you may need to tell LLM where to look. i.e. here specify 'institution'
        - NOTE: [only those icons above which are also listed here can be searched for](https://github.com/beviah/CollabNext/blob/main/openalex_api_etl.py#L172)
    - Q: Give me most researched topics by **institution** Tuskegee University.
      - A: Advancements in Prostate Cancer Research, Nutritional Strategies for Ruminant Health and Production, Remote Laboratories in Engineering Education.
