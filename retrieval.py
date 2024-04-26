@@ -188,14 +188,23 @@ LIMIT 3
 
 Note: Always specify variable:label pair, so (c:concepts) for example
 Note: Always treat (c:concepts|topics|keywords|x_concepts) nodes as one in the search
+Note: If user asks about intitution/university/organisation, search institution nodes, and similarly for author nodes
 Note: For work nodes use 'title_abstract' property, for every other node type/label use 'display_name'!
 Note: work is central node connected to institutions and authors.
 Note: Do not include any explanations or apologies in your responses.
+Note: If CYPHER has ORDER BY, be sure to include aggregate expressions in the preceding RETURN
 Do not respond to any questions that might ask anything else than for you to construct a Cypher statement.
 Do not include any text except the generated Cypher statement.
 
 The question is:
 {question}"""
+
+
+"""TODO:
+{code: Neo.ClientError.Statement.SyntaxError} {message: Cannot use aggregation in ORDER BY if there are no aggregate expressions in the preceding RETURN (line 3, column 1 (offset: 126))
+chain queries with error contexts and try 1 or 2 times fixing query.. 
+"""
+
 
 CYPHER_GENERATION_PROMPT = PromptTemplate(
     input_variables=["schema", "question"], template=CYPHER_GENERATION_TEMPLATE
