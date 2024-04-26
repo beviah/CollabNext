@@ -50,7 +50,8 @@ WITH i, collect(DISTINCT a.community) as author_communities
 WITH i, size(author_communities) as num_communities
 RETURN i.display_name, i.id, num_communities
 ORDER BY num_communities DESC
-LIMIT 1```
+LIMIT 1
+```
 
 Full Context:
 {'i.display_name': 'Tuskegee University', 'i.id': 'https://openalex.org/I6026837', 'num_communities': 7}
