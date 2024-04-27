@@ -26,6 +26,8 @@ It then fetches whatever is in the **lkeep** set, while looking through **keep**
 
 ## Examples
 
+### These examples are using GPT-3.5-turbo, ~20+ times cheaper model than significantly better copmlex queries GPT-4
+
  - Q: Which author from Eastern Oregon University worked on protein supplementation?
    - A: Bruno I Cappellozza, D. W. Bohnert, M. M. Reis, Megan L Van Emon, C. S. Schauer, S. J. Falck, Reinaldo F Cooke from Eastern Oregon University worked on protein supplementation.
 
