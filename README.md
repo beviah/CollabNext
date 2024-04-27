@@ -18,6 +18,12 @@ It then fetches whatever is in the **lkeep** set, while looking through **keep**
 
 **ADAPTABILITY:** With very little modification this code can be adapted to other types of datasets, i.e. analysis of [Clinical Trials](https://classic.clinicaltrials.gov/api/gui/ref/api_urls)
 
+## Setup
+
+1. first run etl file, ingest as much data as you want and your resources allow.. modify inputs = ... and nearby details in the file
+2. run db_operations script after etl
+3. streamlit run retrieval.py
+
 ## Examples
 
  - Q: Which author from Eastern Oregon University worked on protein supplementation?
