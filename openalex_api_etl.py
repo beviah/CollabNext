@@ -39,7 +39,9 @@ def process_json(label, data, parent_label=None, parent_data=None):
             only_data = remove_subs(data)
             #create_or_update_node(label, only_data) # this is now done during relation.. 
         for key, value in data.items():
-            if key in ['authors', 'topics', 'works', 'institutions', 'keywords']:key=key[:-1] #remove plural s; those were intermediary keys
+            # FIXME: another hardcoded line, should reflect (l)keep changes.. 
+            if key in ['authors', 'topics', 'works', 'institutions', 'keywords']:
+                key=key[:-1] #remove plural s; those were intermediary keys
             if key.startswith('primary_'):key = key[8:]#merge primary with other topics
             nlabel = key if key in lkeep else label
             if isinstance(value, dict):
@@ -129,6 +131,8 @@ def add_relationships(parent_data, child_data, parent_label, child_label):
         if not local:
             graph.merge(Relationship(parent_node, child_label, child_node))
             # https://neo4j.com/docs/graph-data-science/current/management-ops/graph-update/to-undirected/  # doing this in real time
+            #   this simplifies later CYPHER generation by LLMs and reduces chance of error, while also reducing richness of expression..
+            #      i.e. 'affiliated' becomes 'INTERACTS', but there is still such relation in schema, so not much harm done, LLM learns from schema. 
             graph.merge(Relationship(parent_node, 'INTERACTS', child_node))
             graph.merge(Relationship(child_node, 'INTERACTS', parent_node))
         else:
@@ -169,7 +173,10 @@ keep = {'id', 'publication_year', 'display_name',
 keepdn = {k+'display_name' for k in keep}
 
 #define final labels of interested to be inserted into the graph
-lkeep = {'publication_year', 'author', 'work', 'title', 'institution', 'funder', 'topic', 'primary_topic', 'keyword', 'concepts', 'x_concepts', 'related_works', 'referenced_works', 'title_abstract'}
+lkeep = {
+    # Top level nodes: Authors, Sources, Institutions, Topics, Publishers, Funders, Geo, Concepts: put them here and above if you want them in results!! 
+    # Here you decide which labels to keep (final node is usually singular vs intermediary step also plural - needs to be looked up in API docs/json examples): 
+    'publication_year', 'author', 'work', 'title', 'institution', 'funder', 'topic', 'primary_topic', 'keyword', 'concepts', 'x_concepts', 'related_works', 'referenced_works', 'title_abstract'}
 lkeepdn = {k+'display_name' for k in lkeep}
 
 
@@ -217,16 +224,16 @@ def parse_abstract(doi, i):
 inputs = ['artificial intelligence']
 inputs = []
 
-starting_with = 'topics' if inputs else 'institutions'
+starting_with = 'topics' if inputs else 'institutions' # make all these generic to handle diverse datasets.. 
 
-years = list(range(2019,2025)) # ~ only last 5 years
+years = list(range(2019,2025)) # only last ~5 years
 
 
 # TODO: for this demo stopped at 20th institutions due to neo4j aura free cloud limits... ~400k relations and 200k nodes. should run full 100... 
 done = 20 # primitive continuation.. should store last seen url
 
 uni2state = {}
-if starting_with == 'institutions':
+if starting_with == 'institutions': # should read node type from column name in CSV file
     with open('inputs.tsv', 'r', encoding='utf-8') as f:
         for i, line in enumerate(f):
             if i<=0+done:continue #load this as csv file
