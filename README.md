@@ -28,6 +28,8 @@ It then fetches whatever is in the **lkeep** set, while looking through **keep**
 
 ### These examples are using GPT-3.5-turbo, ~20+ times cheaper model than GPT-4 models which are significantly better for complex graph queries
 
+### In progress, switching to Ollama model, open source and free
+
  - Q: Which author from Eastern Oregon University worked on protein supplementation?
    - A: Bruno I Cappellozza, D. W. Bohnert, M. M. Reis, Megan L Van Emon, C. S. Schauer, S. J. Falck, Reinaldo F Cooke from Eastern Oregon University worked on protein supplementation.
 
