@@ -56,6 +56,8 @@ It then fetches whatever is in the **lkeep** set, while looking through **keep**
 
 Note: Community and centrality are properties not present in openalex, but calculated on a portion of the graph ingested through ETL step. 
 
+Another note: notice some universities are not HBCU.. some authors of works probably are affiliated with those, that's how they got into the demo graph... 
+
 ## TODO
 
 ### Sentence restructuring... sensitivity issues:
