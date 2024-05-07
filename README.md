@@ -1,6 +1,6 @@
 # CollabNext
 
-This project is hackaton challenge / contribution to *Building the Prototype Open Knowledge Network (Proto-OKN)*, a NSF funded project. 
+This project is hackathon challenge / contribution to *Building the Prototype Open Knowledge Network (Proto-OKN)*, a NSF funded project. 
 
 https://new.nsf.gov/funding/opportunities/building-prototype-open-knowledge-network-proto
 
